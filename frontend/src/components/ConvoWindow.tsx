@@ -17,7 +17,7 @@ const ConvoWindow = ({
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  const postMessageToBackend = async () => {
+  const postMessageToBackend = async (question: string) => {
     const url = "http://localhost:5000/query";
     try {
       const response = await fetch(url, {
@@ -25,7 +25,7 @@ const ConvoWindow = ({
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ question: userInput }),
+        body: JSON.stringify({ question }),
       });
       if (!response.ok) {
         throw new Error(`Response.status:${response.status}`);
@@ -35,26 +35,19 @@ const ConvoWindow = ({
         ...prev,
         { role: "bot", content: result.response },
       ]);
-      console.log(result);
     } catch (error) {
       console.log("Failed to send the question", error);
     }
   };
 
   const handleSubmit = async () => {
-    // this if statement is to prevent the user from sending empty messages
-    if (!userInput) return;
-    // in the case the user's input is not empty then we can try to make the POST request to the backend
+    if (!userInput.trim()) return;
+    const question = userInput;
     try {
-      // we add the message to the message list
-      setMessages((prev) => [...prev, { role: "user", content: userInput }]);
-      //then we can set the user's input back to empty
-      setUserInput("");
-      //we can set the loading state to true as the user is waiting for the response
+      setMessages((prev) => [...prev, { role: "user", content: question }]);
       setLoading(true);
-      // now it is time to make the call to the backend
-      await postMessageToBackend();
-      //now the loading state is false again
+      setUserInput("");
+      await postMessageToBackend(question);
     } catch (error) {
       console.log("Failed to submit the message", error);
     } finally {
@@ -78,13 +71,13 @@ const ConvoWindow = ({
                 <div className="w-[25px] h-[25px] md:w-[32px] md:h-[32px] rounded-full bg-pink-300 flex flex-col items-center justify-center font-roboto-mono text-pink-600 font-bold">
                   CC
                 </div>
-                <div className="px-2 py-1 w-[150px] md:px-4 md:py-2 md:w-[250px] rounded-t-[15px] rounded-br-[15px] bg-neutral-50 font-roboto-mono text-neutral-950 border-2 border-neutral-200">
+                <div className="px-2 py-1 w-[150px] md:px-4 md:py-2 md:w-[250px] rounded-t-[15px] rounded-br-[15px] bg-neutral-50 font-roboto-mono text-neutral-950 border-2 border-neutral-200 break-words">
                   {message.content}
                 </div>
               </>
             ) : (
               <>
-                <div className="px-2 py-1 w-[150px] md:px-4 md:py-2 md:w-[250px] rounded-t-[15px] rounded-bl-[15px] bg-neutral-50 font-roboto-mono text-neutral-950 border-2 border-neutral-200">
+                <div className="px-2 py-1 w-[150px] md:px-4 md:py-2 md:w-[250px] rounded-t-[15px] rounded-bl-[15px] bg-neutral-50 font-roboto-mono text-neutral-950 border-2 border-neutral-200 break-words">
                   {message.content}
                 </div>
                 <div className="w-[25px] h-[25px] md:w-[32px] md:h-[32px] rounded-full bg-pink-600 flex flex-col items-center justify-center font-roboto-mono text-pink-300 font-bold">
@@ -112,7 +105,7 @@ const ConvoWindow = ({
           placeholder="Ask anything..."
           onChange={(e) => setUserInput(e.target.value)}
           onKeyDown={(e) => {
-            if (e.key === "Enter") handleSubmit();
+            if (e.key === "Enter" && !e.shiftKey) handleSubmit();
           }}
           className="border-2 border-white/80  bg-neutral-50 rounded-[5px] w-[200px] h-[40px] md:w-[300px] md:h-[60px] placeholder:font-roboto-mono placeholder:pl-[10px] placeholder:pt-[5px] resize-none overflow-y-auto font-roboto-mono pl-[10px] pt-[5px] "
         />
