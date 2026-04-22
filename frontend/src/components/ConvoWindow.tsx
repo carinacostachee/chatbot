@@ -41,7 +41,14 @@ const ConvoWindow = ({
   };
 
   const handleSubmit = async () => {
-    if (!userInput.trim()) return;
+    if (!userInput.trim()) {
+      setMessages((prev) => [
+        ...prev,
+        { role: "bot", content: "Please type a message before sending!" },
+      ]);
+      return;
+    }
+
     const question = userInput;
     try {
       setMessages((prev) => [...prev, { role: "user", content: question }]);
