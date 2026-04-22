@@ -1,6 +1,6 @@
 import chatbotLogo from "../assets/chatbot-logo.png";
 
-const Header = () => {
+const Header = ({ onClear }: { onClear: () => void }) => {
   return (
     <div className="flex flex-row justify-between items-center px-[20px] w-full h-[70px] md:h-[90px] bg-pink-300 rounded-t-[30px]">
       <div className="flex flex-row items-center gap-[10px] md:gap-[15px]">
@@ -18,6 +18,7 @@ const Header = () => {
       <button
         type="button"
         className="font-roboto-mono bg-white/20 box-border border border-white/20 border-[2px] hover:bg-white/50 hover:text-heading shadow-xs font-medium leading-5 rounded-[8px] md:rounded-[10px] text-xs md:text-sm px-1.5 py-1 md:px-4 md:py-2.5 text-white/80 focus:outline-none"
+        onClick={onClear}
       >
         Clear Chat
       </button>
