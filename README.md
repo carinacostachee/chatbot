@@ -17,6 +17,7 @@ The UI is a chat window with message bubbles, the bot messages are on the left, 
 - **Frontend:** React + TypeScript + Tailwind CSS (Vite)
 - **Backend:** Python + Flask
 - **AI:** Azure OpenAI (GPT)
+- **Testing:** pytest (backend)
 
 ---
 
@@ -26,6 +27,7 @@ The UI is a chat window with message bubbles, the bot messages are on the left, 
 chatbot-app/
 ├── backend/
 │   ├── app.py               # Flask server with /query endpoint
+│   ├── test_app.py           # Backend tests (pytest)
 │   ├── requirements.txt     # Python dependencies
 │   └── .env.example         # Template for environment variables
 │
@@ -108,6 +110,25 @@ cd frontend && npm run dev
 ```
 
 Then open `http://localhost:5173` in your browser.
+
+---
+
+## Testing
+
+The backend includes unit tests using pytest. The tests mock the Azure OpenAI API so no real credentials are needed to run them.
+
+```bash
+cd backend
+source venv/bin/activate   # Windows: venv\Scripts\activate
+pip install pytest
+pytest test_app.py -v
+```
+
+The tests cover:
+
+- **Input validation:** empty questions, whitespace-only input, missing fields, invalid JSON
+- **Successful queries:** valid questions return 200 with the AI's response, correct forwarding to Azure
+- **HTTP methods:** only POST is accepted on `/query`, other methods return 405
 
 ---
 
