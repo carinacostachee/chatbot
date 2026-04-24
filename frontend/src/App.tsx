@@ -17,7 +17,7 @@ const App = () => {
   const handleClear = () => setMessages(INITIAL_MESSAGES);
   return (
     <div className="bg-pink-100 w-full h-screen flex flex-col justify-center items-center">
-      <div className="box-border w-[300px] h-[570px] md:w-[450px] md:h-[700px] bg-white rounded-[30px] flex flex-col relative overflow-hidden">
+      <div className="box-border w-[300px] h-[570px] md:w-[450px] md:h-[700px] max-h-[90vh] bg-white rounded-[30px] flex flex-col relative overflow-hidden">
         <Header onClear={handleClear} />
         <ConvoWindow messages={messages} setMessages={setMessages} />
       </div>

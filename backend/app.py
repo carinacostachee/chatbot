@@ -18,8 +18,11 @@ deployment = os.getenv("AZURE_OPENAI_DEPLOYMENT")
 
 @app.route("/query", methods=["POST"])
 def query():
-    # first we read the question from the request body
-    user_request = request.get_json()
+    # first we read the question from the request body and pass silent=True
+    # so Flask returns None instead of crashing on bad JSON
+    user_request = request.get_json(silent=True)
+    if user_request is None:
+        return jsonify({"response": "Invalid request body."}), 400
     user_question = user_request.get("question", "").strip()
     # we then need to make sure that the question is not empty
     if not user_question:
@@ -29,7 +32,13 @@ def query():
         completion = client.chat.completions.create(
             model=deployment,
             messages=[
-                {"role": "system", "content": "You are a helpful assistant"},
+                {
+                    "role": "system",
+                    "content": (
+                        "You are a friendly and helpful AI assistant. "
+                        "Give clear and concise answers."
+                    ),
+                },
                 {"role": "user", "content": user_question},
             ],
             max_tokens=500,
